@@ -22,8 +22,7 @@ def associate_marker_metadata_for(item):
         return
 
     test_key = marker.kwargs["test_key"]
-    test_exec_key = marker.kwargs["test_exec_key"]
-    _test_keys[item.nodeid] = test_key, test_exec_key
+    _test_keys[item.nodeid] = test_key
 
 
 def get_test_key_for(item):
@@ -41,10 +40,11 @@ class PublishXrayResults:
 
     def __call__(self, *report_objs):
         bearer_token = self.authenticate()
-        for a_dict in self._test_execution_summaries(*report_objs):
-            self._post(a_dict, bearer_token)
+        
+        payload = self._test_execution_summary(*report_objs)
+        self._post(payload, bearer_token)
 
-        logger.info("Successfully posted all test execution results to Xray!")
+        logger.info("Successfully posted all test results to Xray!")
 
     def _post(self, a_dict, bearer_token):
         payload = json.dumps(a_dict)
@@ -71,19 +71,16 @@ class PublishXrayResults:
         token = resp.json()
         return token
 
-    def _test_execution_summaries(self, *report_objs):
-        summaries = {}
+    def _test_execution_summary(self, *report_objs):
+        summary = self._create_header()
 
         for each in report_objs:
-            if not each.test_exec_key in summaries:
-                summaries[each.test_exec_key] = self._create_header(each.test_exec_key)
-            summaries[each.test_exec_key]["tests"].append(each.as_dict())
+            summary["tests"].append(each.as_dict())
 
-        return summaries.values()
+        return summary
 
     def _create_header(self, test_exec_key):
         return {
-            "testExecutionKey": test_exec_key,
             "info": {
                 "summary": "Execution of automated tests",
                 "description": "",
