@@ -1,26 +1,27 @@
 Plugin installation
 ======================
 
-To install this library for use please enter the following command:
+To install this library for use please enter the following command (pypi integration coming soon):
 
-    $ pip install pytest_xray
+    $ pip install git+git://github.com/InbarRose/pytest_xrayjira@master#egg=pytest_xrayjira
+    
 
 To use this plugin
 ======================
 
-To take advantage of the pytest xray plugin, use markers from pytest to associate a test function with a test key and test execution id:
+To take advantage of the pytest xrayjira plugin, use markers from pytest to associate a test function with a test key and test execution id:
 
     import pytest
 
-    @pytest.mark.xray(test_key="PRDS-12345", test_exec_key="PRDS-12121")
+    @pytest.mark.xrayjira(test_key="KEY-12345")
     def test_my_function():
         assert True == True
 
 Enable the plugin by passing the extra options to the command line when invoking the pytest runner:
 
-    $ pytest . --jira-xray
+    $ pytest . --upload-results-to-jira-xray
 
-It is important that the environment variables **XRAY_API_CLIENT_ID** and **XRAY_API_CLIENT_SECRET** are set for pytest_xray to sucessfully post results to the Xray API.
+It is important that the environment variables **XRAY_API_CLIENT_ID** and **XRAY_API_CLIENT_SECRET** are set for pytest_xrayjira to sucessfully post results to the Xray API.
 
 Maintenance notes
 ======================
