@@ -2,9 +2,8 @@ from datetime import datetime, timedelta
 
 
 class XrayTestReport:
-    def __init__(self, test_key, test_exec_key, duration, exception_log=None):
+    def __init__(self, test_key, duration, exception_log=None):
         self.test_key = test_key
-        self.test_exec_key = test_exec_key
         self._set_execution_range(duration)
         self.exception_log = exception_log
 
@@ -27,9 +26,9 @@ class XrayTestReport:
         return entry
 
     @classmethod
-    def as_passed(cls, test_key, test_exec_key, duration):
-        return XrayTestReport(test_key, test_exec_key, duration)
+    def as_passed(cls, test_key, duration):
+        return XrayTestReport(test_key, duration)
 
     @classmethod
-    def as_failed(cls, test_key, test_exec_key, duration, exception_log):
-        return XrayTestReport(test_key, test_exec_key, duration, exception_log)
+    def as_failed(cls, test_key, duration, exception_log):
+        return XrayTestReport(test_key, duration, exception_log)
