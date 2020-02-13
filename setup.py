@@ -14,18 +14,18 @@ PKG_INSTALL_REQS = ["pytest==4.3.1", "requests==2.21.0"]
 
 
 setup(
-    name="pytest_xray",
-    author="Neville Tummon",
-    author_email="nt.devs@gmail.com",
-    version="0.2.1",
-    python_requires=">=3.6.6",
+    name="pytest_xrayjira",
+    author="Inbar Rose",
+    author_email="inbar.rose1@gmail.com",
+    version="0.9.1",
+    python_requires=">=3.7.4",
     long_description=long_description(),
     long_description_content_type="text/markdown",
     packages=find_packages(exclude=("tests",)),
-    download_url="https://github.com/Isentia/pytest_xray/archive/v0.2.1.tar.gz",
+    #  download_url="MISSING",  # TODO: add download_url
     install_requires=PKG_INSTALL_REQS,
-    summary="py.test Xray integration plugin, using markers",
-    entry_points={"pytest11": ["pytest_xray = pytest_xray.plugin"]},
+    summary="py.test Xray Jira integration plugin, using markers",
+    entry_points={"pytest11": ["pytest_xrayjira = pytest_xrayjira.plugin"]},
     classifiers=[
         # How mature is this project? Common values are
         #   3 - Alpha
@@ -37,7 +37,6 @@ setup(
         "Topic :: Software Development :: Testing",
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: Implementation :: CPython",
     ],
