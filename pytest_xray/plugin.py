@@ -6,11 +6,11 @@ from .constants import XRAY_API_BASE_URL, XRAY_PLUGIN
 from .models import XrayTestReport
 from .utils import PublishXrayResults, associate_marker_metadata_for, get_test_key_for
 
-JIRA_XRAY_FLAG = "--jira-xray"
+UPLOAD_RESULTS_TO_XRAY_JIRA_FLAG = "--upload-results-to-jira-xray"
 
 
 def pytest_configure(config):
-    if not config.getoption(JIRA_XRAY_FLAG):
+    if not config.getoption(UPLOAD_RESULTS_TO_XRAY_JIRA_FLAG):
         return
 
     plugin = PublishXrayResults(
@@ -25,12 +25,12 @@ def pytest_addoption(parser):
     group = parser.getgroup("JIRA Xray integration")
 
     group.addoption(
-        JIRA_XRAY_FLAG, action="store_true", help="jira_xray: Publish test results to Xray API"
+        UPLOAD_RESULTS_TO_XRAY_JIRA_FLAG, action="store_true", help="jira_xray: Publish test results to Xray API"
     )
 
 
 def pytest_collection_modifyitems(config, items):
-    if not config.getoption(JIRA_XRAY_FLAG):
+    if not config.getoption(UPLOAD_RESULTS_TO_XRAY_JIRA_FLAG):
         return
 
     for item in items:
@@ -38,23 +38,23 @@ def pytest_collection_modifyitems(config, items):
 
 
 def pytest_terminal_summary(terminalreporter):
-    if not terminalreporter.config.getoption(JIRA_XRAY_FLAG):
+    if not terminalreporter.config.getoption(UPLOAD_RESULTS_TO_XRAY_JIRA_FLAG):
         return
 
     test_reports = []
     if "passed" in terminalreporter.stats:
         for each in terminalreporter.stats["passed"]:
-            test_key, test_exec_key = get_test_key_for(each)
+            test_key = get_test_key_for(each)
             if test_key:
-                report = XrayTestReport.as_passed(test_key, test_exec_key, each.duration)
+                report = XrayTestReport.as_passed(test_key, each.duration)
                 test_reports.append(report)
 
     if "failed" in terminalreporter.stats:
         for each in terminalreporter.stats["failed"]:
-            test_key, test_exec_key = get_test_key_for(each)
+            test_key = get_test_key_for(each)
             if test_key:
                 report = XrayTestReport.as_failed(
-                    test_key, test_exec_key, each.duration, each.longreprtext
+                    test_key, each.duration, each.longreprtext
                 )
                 test_reports.append(report)
 
