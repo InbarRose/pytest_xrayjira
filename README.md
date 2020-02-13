@@ -9,7 +9,7 @@ To install this library for use please enter the following command (pypi integra
 To use this plugin
 ======================
 
-To take advantage of the pytest xrayjira plugin, use markers from pytest to associate a test function with a test key and test execution id:
+To take advantage of the pytest xrayjira plugin, use markers from pytest to associate a test function with a test key:
 
     import pytest
 
@@ -22,6 +22,8 @@ Enable the plugin by passing the extra options to the command line when invoking
     $ pytest . --upload-results-to-jira-xray
 
 It is important that the environment variables **XRAY_API_CLIENT_ID** and **XRAY_API_CLIENT_SECRET** are set for pytest_xrayjira to sucessfully post results to the Xray API.
+
+This will create a new test execution which will include all tests that were run.
 
 Maintenance notes
 ======================
