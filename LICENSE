@@ -1,6 +1,7 @@
 MIT License
 
-Copyright (c) 2019 Neville Tummon
+Copyright (c) for portions of the project originally called "pytest_xray" are held by 2019 Neville Tummon.
+All other copyright and modifications of the original project now called project "pytest_xrayjira" are held by 2020 Inbar Rose
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
