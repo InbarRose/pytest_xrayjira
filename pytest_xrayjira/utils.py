@@ -79,7 +79,7 @@ class PublishXrayResults:
 
         return summary
 
-    def _create_header(self, test_exec_key):
+    def _create_header(self):
         return {
             "info": {
                 "summary": "Execution of automated tests",
