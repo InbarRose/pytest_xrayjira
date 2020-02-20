@@ -35,6 +35,10 @@ def get_user():
     return os.environ.get('XRAY_USER', "")
 
 
+def get_project():
+    return os.environ.get('XRAY_PROJECT', "")
+
+
 def _get_xray_marker(item):
     return item.get_closest_marker(XRAY_MARKER_NAME)
 
@@ -53,6 +57,10 @@ def get_test_key_for(item):
     if results:
         return results
     return None, None
+
+
+def format_timestamp(dt):
+    return dt.astimezone().isoformat(timespec='seconds')
 
 
 class PublishXrayResults:
@@ -108,14 +116,15 @@ class PublishXrayResults:
     def _create_header(self):
         return {
             "info": {
+                "project": get_project(),
                 "summary": "Execution of automated tests, auto-created execution",
                 "description": "Execution of automated tests, auto-created execution",
                 "version": get_version(),
                 "revision": get_revision(),
                 "user": get_user(),
                 "testPlanKey": get_testplan_key(),
-                "startDate": self._start_time.isoformat(),
-                "finishDate": datetime.datetime.now().isoformat(),
+                "startDate": format_timestamp(self._start_time),
+                "finishDate": format_timestamp(datetime.datetime.now()),
                 "testEnvironments": get_test_environments(),
             },
             "tests": [],
