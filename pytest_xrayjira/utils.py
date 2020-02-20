@@ -76,9 +76,11 @@ class PublishXrayResults:
         bearer_token = self.authenticate()
 
         payload = self._test_execution_summary(*report_objs)
-        self._post(payload, bearer_token)
-
-        log.info("Successfully posted all test results to Xray!")
+        success = self._post(payload, bearer_token)
+        if success:
+            log.info("Successfully posted all test results to Xray!")
+        else:
+            log.info("Failure posting all test results to Xray!")
 
     def _post(self, a_dict, bearer_token):
         payload = json.dumps(a_dict)
@@ -91,8 +93,10 @@ class PublishXrayResults:
             log.error("There was an error from Xray API!")
             log.error(resp.text)
             log.info(f"Payload => {payload}")
+            return False
         else:
             log.info("Post test execution success!")
+            return True
 
     def results_url(self):
         return f"{self.base_url}/api/v1/import/execution"
