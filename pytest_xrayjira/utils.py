@@ -4,13 +4,13 @@ import logging
 import datetime
 import pytest
 import requests
-
+from collections import defaultdict
 from .constants import XRAY_MARKER_NAME
 
 log = logging.getLogger('xrayjira.publisher')
 log.setLevel(logging.INFO)
 
-_test_keys = {}
+_xray_tests = {}
 
 
 def get_revision():
@@ -56,12 +56,15 @@ def associate_marker_metadata_for(item):
     if not marker:
         return
 
-    test_key = marker.kwargs["test_key"]
-    _test_keys[item.nodeid] = test_key
+    test_key = marker.kwargs["xray_kwargs"]
+    xray_kwargs = {
+        'xray_kwargs': test_key,
+    }
+    _xray_tests[item.nodeid] = xray_kwargs
 
 
-def get_test_key_for(item):
-    results = _test_keys.get(item.nodeid)
+def get_test_xray_kwargs(item):
+    results = _xray_tests.get(item.nodeid)
     if results:
         return results
     return None
@@ -82,13 +85,14 @@ class PublishXrayResults:
     def __call__(self, *report_objs):
         log.info(f"XrayJira Publisher Called")
         bearer_token = self.authenticate()
-
-        payload = self._test_execution_summary(*report_objs)
-        success = self._post(payload, bearer_token)
-        if success:
-            log.info("Successfully posted all test results to Xray!")
-        else:
-            log.info("Failure posting all test results to Xray!")
+        self._finish_time = datetime.datetime.now()
+        payloads = self._prepare_test_payloads(*report_objs)
+        for payload in payloads:
+            success = self._post(payload, bearer_token)
+            if success:
+                log.info("Successfully posted test results to Xray! Plan=")
+            else:
+                log.info("Failure posting all test results to Xray! Plan={}".format(payload['info']['testPlanKey']))
 
     def _post(self, a_dict, bearer_token):
         payload = json.dumps(a_dict)
@@ -117,27 +121,48 @@ class PublishXrayResults:
         token = resp.json()
         return token
 
-    def _test_execution_summary(self, *report_objs):
-        summary = self._create_header()
-
+    def _sort_tests_into_plans(self, report_objs):
+        test_plans = defaultdict(list)
         for each in report_objs:
-            summary["tests"].append(each.as_dict())
+            test_plans[each.testplan_key].append(each)
+        return test_plans
 
-        return summary
+    def _prepare_test_payloads(self, *report_objs):
+        test_plans = self._sort_tests_into_plans(report_objs)
+        payloads = []
+        for testplan_key, reports in test_plans.items():
+            payload = self._create_base_payload(testplan_key=testplan_key)
 
-    def _create_header(self):
-        return {
+            for each in reports:
+                payload["tests"].append(each.as_dict())
+
+            payloads.append(payload)
+        return payloads
+
+    def _create_base_payload(self, **info):
+        payload = {
             "info": {
-                "project": get_project(),
-                "summary": get_summary(),
-                "description": get_description(),
-                "version": get_version(),
-                "revision": get_revision(),
-                "user": get_user(),
-                "testPlanKey": get_testplan_key(),
+                # strings
+                "project": info.get('project') or get_project(),
+                "summary": info.get('summary') or get_summary(),
+                "description": info.get('description') or get_description(),
+                "version": info.get('version') or get_version(),
+                "revision": info.get('revision') or get_revision(),
+                # dates
                 "startDate": format_timestamp(self._start_time),
-                "finishDate": format_timestamp(datetime.datetime.now()),
-                "testEnvironments": get_test_environments(),
+                "finishDate": format_timestamp(self._finish_time),
+                # list
+                "testEnvironments": info.get('test_environments') or get_test_environments(),
             },
             "tests": [],
         }
+
+        # optional params (if we dont have, we should not use)
+        user = info.get('user') or get_user()
+        if user:
+            payload['info']['user'] = user  # assigns the execution to this user
+        testplan_key = info.get('testplan_key') or get_testplan_key()
+        if testplan_key:  # either supplied by the test mark with plan_key=XXX or by env with XRAY_TESTPLAN_KEY
+            payload['info']['testPlanKey'] = testplan_key
+
+        return payload
