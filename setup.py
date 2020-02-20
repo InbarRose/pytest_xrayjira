@@ -17,7 +17,7 @@ setup(
     name="pytest_xrayjira",
     author="Inbar Rose",
     author_email="inbar.rose1@gmail.com",
-    version="0.10.3",
+    version="0.10.4",
     python_requires=">=3.7.4",
     long_description=long_description(),
     long_description_content_type="text/markdown",
