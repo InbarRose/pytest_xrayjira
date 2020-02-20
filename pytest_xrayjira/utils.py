@@ -27,7 +27,7 @@ def get_testplan_key():
 
 def get_test_environments():
     envs = os.environ.get('XRAY_TEST_ENVS', "")
-    envs = envs.split(';')
+    envs = envs.split(';') if envs else []
     return envs
 
 
