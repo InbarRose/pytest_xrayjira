@@ -56,7 +56,7 @@ def get_test_key_for(item):
     results = _test_keys.get(item.nodeid)
     if results:
         return results
-    return None, None
+    return None
 
 
 def format_timestamp(dt):
