@@ -86,9 +86,9 @@ class PublishXrayResults:
         for payload in payloads:
             success = self._post(payload, bearer_token)
             if success:
-                log.info("Successfully posted test results to Xray! Plan=")
+                log.info("Successfully posted test results to Xray! Plan={}".format(payload['info'].get('testPlanKey')))
             else:
-                log.info("Failure posting all test results to Xray! Plan={}".format(payload['info']['testPlanKey']))
+                log.info("Failure posting all test results to Xray! Plan={}".format(payload['info'].get('testPlanKey')))
 
     def _post(self, a_dict, bearer_token):
         payload = json.dumps(a_dict)
