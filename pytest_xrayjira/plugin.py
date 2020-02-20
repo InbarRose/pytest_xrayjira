@@ -1,12 +1,9 @@
 from os import environ
 
-import pytest
-
-from .constants import XRAY_API_BASE_URL, XRAY_PLUGIN
+from .constants import XRAY_API_BASE_URL, XRAY_PLUGIN, XRAY_MARKER_NAME, MARKER_ARGS, MARKER_DESCRIPTION, \
+    UPLOAD_RESULTS_TO_XRAY_JIRA_FLAG
 from .models import XrayTestReport
 from .utils import PublishXrayResults, associate_marker_metadata_for, get_test_xray_kwargs
-
-UPLOAD_RESULTS_TO_XRAY_JIRA_FLAG = "--upload-results-to-jira-xray"
 
 
 def pytest_configure(config):
@@ -19,13 +16,16 @@ def pytest_configure(config):
         client_secret=environ["XRAY_API_CLIENT_SECRET"],
     )
     config.pluginmanager.register(plugin, XRAY_PLUGIN)
+    config.addinivalue_line(
+        "markers", f"{XRAY_MARKER_NAME}{MARKER_ARGS}: {MARKER_DESCRIPTION}"
+    )
 
 
 def pytest_addoption(parser):
     group = parser.getgroup("JIRA Xray integration")
 
     group.addoption(
-        UPLOAD_RESULTS_TO_XRAY_JIRA_FLAG, action="store_true", help="jira_xray: Publish test results to Xray API"
+        UPLOAD_RESULTS_TO_XRAY_JIRA_FLAG, action="store_true", help="jira_xray: Publish test results to Xray Jira API"
     )
 
 
