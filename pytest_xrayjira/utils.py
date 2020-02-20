@@ -56,7 +56,7 @@ def associate_marker_metadata_for(item):
     if not marker:
         return
 
-    test_key = marker.kwargs["xray_kwargs"]
+    test_key = marker.kwargs["test_key"]
     xray_kwargs = {
         'xray_kwargs': test_key,
     }
