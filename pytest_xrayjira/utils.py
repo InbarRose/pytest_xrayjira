@@ -39,6 +39,14 @@ def get_project():
     return os.environ.get('XRAY_PROJECT', "")
 
 
+def get_summary():
+    return os.environ.get('XRAY_SUMMARY', "Execution of automated tests, auto-created execution")
+
+
+def get_description():
+    return os.environ.get('XRAY_DESCRIPTION', "Execution of automated tests, auto-created execution")
+
+
 def _get_xray_marker(item):
     return item.get_closest_marker(XRAY_MARKER_NAME)
 
@@ -121,8 +129,8 @@ class PublishXrayResults:
         return {
             "info": {
                 "project": get_project(),
-                "summary": "Execution of automated tests, auto-created execution",
-                "description": "Execution of automated tests, auto-created execution",
+                "summary": get_summary(),
+                "description": get_description(),
                 "version": get_version(),
                 "revision": get_revision(),
                 "user": get_user(),
