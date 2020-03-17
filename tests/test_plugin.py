@@ -10,7 +10,7 @@ test_marker = 'XrayJira test payloads:'
 def test_xrayjira_mock(testdir):
     test_xrayjira = """
     import pytest
-    pytest_plugins = "pytester"
+    pytest_plugins = ("pytester", "pytest_xrayjira")
     
     @pytest.mark.xrayjira(test_key="KEY-1")
     def test_pass_1():
