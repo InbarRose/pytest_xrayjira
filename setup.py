@@ -10,14 +10,14 @@ def long_description():
         return f.read()
 
 
-PKG_INSTALL_REQS = ["pytest==4.3.1", "requests==2.21.0.1"]
+PKG_INSTALL_REQS = ["pytest==4.3.1", "requests==2.21.0.2"]
 
 
 setup(
     name="pytest_xrayjira",
     author="Inbar Rose",
     author_email="inbar.rose1@gmail.com",
-    version="1.0.1",
+    version="1.0.2",
     python_requires=">=3.7.4",
     long_description=long_description(),
     long_description_content_type="text/markdown",
