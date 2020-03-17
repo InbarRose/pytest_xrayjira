@@ -80,9 +80,16 @@ class PublishXrayResults:
 
     def __call__(self, *report_objs):
         log.info(f"XrayJira Publisher Called")
-        bearer_token = self.authenticate()
         self._finish_time = datetime.datetime.now()
         payloads = self._prepare_test_payloads(*report_objs)
+        if self.is_test:
+            log.info(f"XrayJira in test mode, skip publishing - print to stdout")
+            print('XrayJira test payloads:')
+            for p in payloads:
+                print(json.dumps(p))
+            return payloads
+
+        bearer_token = self.authenticate()
         for payload in payloads:
             success = self._post(payload, bearer_token)
             if success:
@@ -91,7 +98,7 @@ class PublishXrayResults:
                 log.info("Failure posting all test results to Xray! Plan={}".format(payload['info'].get('testPlanKey')))
 
     def _post(self, a_dict, bearer_token):
-        payload = json.dumps(a_dict)
+        payload = json.dumps(a_dict, sort_keys=True)
         log.debug(f"Payload => {payload}")
         url = self.results_url()
         headers = {"Content-Type": "application/json", "Authorization": f"Bearer {bearer_token}"}
@@ -105,6 +112,10 @@ class PublishXrayResults:
         else:
             log.info("Post test execution success!")
             return True
+
+    @property
+    def is_test(self):
+        return bool(self.client_id == 'test' and self.client_secret == 'test')
 
     def results_url(self):
         return f"{self.base_url}/api/v1/import/execution"

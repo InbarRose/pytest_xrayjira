@@ -1,9 +1,9 @@
 Plugin installation
 ======================
 
-To install this library for use please enter the following command (pypi integration coming soon):
+To install this library for use please enter the following command:
 
-    $ pip install git+git://github.com/InbarRose/pytest_xrayjira@master#egg=pytest_xrayjira
+    $ pip install pytest-xrayjira
     
 
 To use this plugin
